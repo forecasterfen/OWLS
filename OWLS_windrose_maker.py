@@ -7,6 +7,10 @@ from meteostat import Point, Hourly
 from windrose import WindroseAxes
 from datetime import datetime
 
+#For this program to work, start and end variables use datetime function, example is datetime(yyyy,m,d) if month and/or day has double digits
+#then you will add the second digit, otherwise, just add only one digit. The start and end defines how farback you want to grab the data and
+#how far foward you want your data from
+
 def windRoseElevation(latitude, longitude, elevation, start, end):
     # Define location
     location = Point(latitude, longitude, elevation)
