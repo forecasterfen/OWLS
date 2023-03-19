@@ -1,0 +1,33 @@
+def NWSTableForecast (latitude, longitude):
+    import requests
+    import json
+    import pandas as pd
+    from pandas import json_normalize
+    grid_API = requests.get('https://api.weather.gov/points/'+str(latitude)+','+str(longitude))
+    #print(response_API.status_code)
+    data = grid_API.text
+    parse_json = json.loads(data)
+    WFA=parse_json['properties']['forecast']
+    print(WFA)
+    Forecast = WFA
+    response = requests.get(Forecast)
+    forecast = response.json()['properties']
+    print('Forecast updated:', forecast['updated'])
+    print('')
+    for period in forecast['periods']:
+        d = []
+        for period in forecast['periods']:
+            d.append(
+                {
+                    'Time': (period['name']),
+                    'Temperature (℉)': (period['temperature']),
+                    'Chance of Rain (%)': (period['probabilityOfPrecipitation']['value']),
+                    'Dew Point (℉)': (period['dewpoint']['value']*(9/5)+32),
+                    'Reletive Humidity (%)': (period['relativeHumidity']['value']),
+                    'Wind Speed (mph)': (period['windSpeed']),
+                    'Wind Direction': (period['windDirection'])
+            
+                }
+            )
+
+    print(pd.DataFrame(d))
