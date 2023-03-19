@@ -2,7 +2,6 @@ def NWSTableForecast (latitude, longitude):
     import requests
     import json
     import pandas as pd
-    from pandas import json_normalize
     grid_API = requests.get('https://api.weather.gov/points/'+str(latitude)+','+str(longitude))
     #print(response_API.status_code)
     data = grid_API.text
