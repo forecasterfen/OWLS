@@ -1,0 +1,42 @@
+#Required packages
+
+from meteostat import Point, Hourly
+from datetime import datetime
+import pandas as pd
+import numpy as np
+from neuralprophet import NeuralProphet
+
+start = datetime(2018, 1, 1)
+end = datetime(2023, 4, 18)
+location = Point(30.4383, -84.2807)
+data = Hourly(location, start, end)
+data = data.normalize()
+data = data.interpolate()
+data = data.fetch()
+dataset=data
+data.to_csv('base_data')
+table=pd.read_csv('base_data')
+
+table['ds']=pd.DatetimeIndex(table['temp']) 
+data1=table[['time','temp','dwpt', 'rhum', 'pres', 'prcp']]
+data1.columns=['ds','y','x','z','w', 'p']
+data1.head
+data1.head
+df_temp=data1
+df_temp=df_temp.fillna(0)
+
+
+m = NeuralProphet()
+m = m.add_future_regressor('x')
+m = m.add_future_regressor('z')
+m = m.add_future_regressor('w')
+m = m.add_future_regressor('p')
+
+metrics = m.fit(df_temp, freq='H')
+temp_forecast = m.predict(df_temp)
+
+
+now = datetime.now()
+future=(temp_forecast["ds"] > now)
+temp_forecast['Future?'] = future
+future_forecast = temp_forecast[temp_forecast['Future?'] == True]
